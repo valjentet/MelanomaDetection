@@ -126,3 +126,20 @@ These results show that:
 ### 4.3. Interpretation
 
 Even though several models (machine learning on tabular features and deep learning on images) achieve strong global metrics around **90 %** accuracy, the recall on melanoma cases remains too low. This project could be upgraded with a focus on the recall.  
+
+### 4.4. Feature space visualization (PCA & t‑SNE)
+
+To better understand the structure of the data, I projected the images / features into 2D using:
+
+- **PCA (Principal Component Analysis)** linear projection.
+- **t‑SNE** non‑linear projection focusing on local neighborhoods.
+
+![PCA projection of lesions](images/PCA.png)
+
+![t-SNE projection of lesions](images/t-SNE.png)
+
+In both plots, each point corresponds to one lesion, colored by its label (melanoma vs. non‑melanoma).
+These visualizations show that:
+- the two classes are only partially separable in the chosen feature space;
+- many melanoma points remain mixed with non‑melanoma ones, which helps explain why classification is challenging.
+- Melanoma features tends to be extreme on many points
