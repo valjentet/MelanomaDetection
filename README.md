@@ -106,3 +106,19 @@ Also we need to change the weights because in medecine we need to absolutely imp
 
 Even though several models (machine learning and deep learning) achieve strong global metrics, the **recall on melanoma cases is not reliable enough**.  
 In a real screening context, false negatives (missed melanomas) are unacceptable. 
+
+### 4.4. Feature space visualization (PCA & t‑SNE)
+
+To better understand the structure of the data, I projected the images / features into 2D using:
+
+- **PCA (Principal Component Analysis)** – linear projection.
+- **t‑SNE** – non‑linear projection focusing on local neighborhoods.
+
+![PCA projection of lesions](images/PCA.png)
+
+![t-SNE projection of lesions](images/t-SNE.png)
+
+In both plots, each point corresponds to one lesion, colored by its label (melanoma vs. non‑melanoma).
+These visualizations show that:
+- the two classes are only partially separable in the chosen feature space;
+- many melanoma points remain mixed with non‑melanoma ones, which helps explain why classification is challenging.
