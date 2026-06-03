@@ -6,8 +6,17 @@ __pycache__/
 # C extensions
 *.so
 
+
 *.png
-*.jpg
+*.jpg*
+
+#Accept img
+
+!PCA.png
+!t-SNE.png
+
+
+
 
 # Distribution / packaging
 .Python
