@@ -31,11 +31,11 @@ The workflow implemented in the notebooks and script is:
 
 2. **Feature selection**  
    - Univariate feature selection with `SelectKBest` and ANOVA F‑test.  
-   - Keep the **15 best features** out of 33 to reduce overfitting and improve generalization.
+   - Keep the 15 best features out of 33 to reduce overfitting and improve generalization.
 
 3. **Machine learning models and hyperparameter tuning**
 
-The following models are trained and tuned with **GridSearchCV** and **StratifiedKFold (5‑fold)**, optimizing the **F1‑score**:
+The following models are trained and tuned with GridSearchCV and StratifiedKFold (5‑fold), optimizing the F1‑score:
 
 - Random Forest (`RandomForestClassifier`, class weights balanced).  
 - Gradient Boosting (`GradientBoostingClassifier`).  
@@ -67,9 +67,9 @@ These deep learning models allow a direct comparison between:
 On the held‑out test set, after hyperparameter tuning:
 
 - Tree‑based models and SVM reach:
-  - **Accuracy** ≈ 0.88–0.89  
-  - **F1‑score** ≈ 0.94 for the best Gradient Boosting model  
-  - **ROC‑AUC** ≈ 0.80–0.82  
+  - Accuracy ≈ **0.88–0.89**  
+  - F1‑score ≈ **0.94** for the best Gradient Boosting model  
+  - ROC‑AUC ≈ **0.80–0.82**  
 
 A typical result for the best Gradient Boosting model:
 
@@ -79,46 +79,50 @@ A typical result for the best Gradient Boosting model:
 
 However, the detailed classification report reveals that:
 
-- Performance on the **non‑melanoma** class is excellent.  
-- Recall on the **melanoma** class is very poor (most melanomas are still missed), despite high global scores.
+- Performance on the non‑melanoma class is excellent.  
+- Recall on the melanoma class is very poor (most melanomas are still missed), despite high global scores.
 
-Cross‑validation (5‑fold stratified) confirms that these models are stable in terms of overall accuracy and F1‑score, but they do **not** provide a reliable sensitivity to melanoma cases.
+Cross‑validation (5‑fold stratified) confirms that these models are stable in terms of overall accuracy and F1‑score, but they do not provide a reliable sensitivity to melanoma cases.
 
 
-### 4.2. Deep learning models (images)
+Parfait, là on a de vraies infos solides à mettre dans la partie “Results” des CNN.
+
+Voici uniquement la section 4.2 et la fin de 4.3 mise à jour, que tu peux remplacer dans ton README :
+
+text
+### 4.2. Deep learning models
 
 Two convolutional neural networks were trained directly on dermoscopic images:
 
 - A **custom CNN built from scratch**, used as a baseline.  
 - A **VGG16‑based model** using transfer learning (pretrained on ImageNet) with a custom classification head.
 
-On validation data:
+On the test set (1 503 images, 1 336 non‑melanoma and 167 melanoma), both models reach a similar overall accuracy of about **0.90**, but their behaviour on the melanoma class is much less convincing.
 
-- Both CNNs reach reasonable overall accuracy and are able to learn meaningful visual patterns.  
-- The VGG16‑based model generally performs better than the custom CNN baseline, thanks to transfer learning.  
-- However, neither model clearly outperforms the best tabular Gradient Boosting model in terms of robustness, and achieving high recall on melanoma cases remains difficult.
+**Custom CNN from scratch — confusion matrix**
 
-These experiments show that image‑based deep learning is promising, but requires more data, stronger regularization and careful handling of class imbalance to be clinically useful.
-Also we need to change the weights because in medecine we need to absolutely improve the recall on the melanoma. 
+- Confusion matrix: `[[1311, 25], [129, 38]]`  
+  - TN = 1311, FP = 25, FN = 129, TP = 38  
+- Classification report:  
+  - Non‑melanoma (0): precision = 0.91, recall = 0.98, F1 = 0.94  
+  - Melanoma (1): precision = 0.60, recall = 0.23, F1 = 0.33  
+  - Accuracy = 0.90, macro F1 = 0.64, weighted F1 = 0.88  
+
+**VGG16 transfer learning — confusion matrix**
+
+- Confusion matrix: `[[1307, 29], [119, 48]]`  
+  - TN = 1307, FP = 29, FN = 119, TP = 48  
+- Classification report (class 0 = non‑melanoma, class 1 = melanoma):  
+  - Non‑melanoma (0): precision = 0.92, recall = 0.98, F1 = 0.95  
+  - Melanoma (1): precision = 0.62, recall = 0.29, F1 = 0.39  
+  - Accuracy = 0.90, macro F1 = 0.67, weighted F1 = 0.88  
+
+These results show that:
+
+- Both CNNs classify non‑melanoma cases very well.  
+- Even with transfer learning (VGG16), the recall on melanoma stays low (0.29 for VGG16, 0.23 for the custom CNN), meaning many melanomas are still misclassified as benign.
 
 
 ### 4.3. Interpretation
 
-Even though several models (machine learning and deep learning) achieve strong global metrics, the **recall on melanoma cases is not reliable enough**.  
-In a real screening context, false negatives (missed melanomas) are unacceptable. 
-
-### 4.4. Feature space visualization (PCA & t‑SNE)
-
-To better understand the structure of the data, I projected the images / features into 2D using:
-
-- **PCA (Principal Component Analysis)** – linear projection.
-- **t‑SNE** – non‑linear projection focusing on local neighborhoods.
-
-![PCA projection of lesions](images/PCA.png)
-
-![t-SNE projection of lesions](images/t-SNE.png)
-
-In both plots, each point corresponds to one lesion, colored by its label (melanoma vs. non‑melanoma).
-These visualizations show that:
-- the two classes are only partially separable in the chosen feature space;
-- many melanoma points remain mixed with non‑melanoma ones, which helps explain why classification is challenging.
+Even though several models (machine learning on tabular features and deep learning on images) achieve strong global metrics around **90 %** accuracy, the recall on melanoma cases remains too low. This project could be upgraded with a focus on the recall.  
